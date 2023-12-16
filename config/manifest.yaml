@@ -123,6 +123,18 @@ spec:
             - name: certs
               mountPath: /certs
               readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+            initialDelaySeconds: 5
+            periodSeconds: 10
       volumes:
         - name: certs
           secret:
