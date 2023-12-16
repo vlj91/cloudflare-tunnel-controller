@@ -1,8 +1,38 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+
+@app.route('/mutate', methods=['POST'])
+def mutate():
+  admission_review = request.json
+
+  if admission_review.get('request'):
+    # Extract the admission request object
+    admission_request = admission_review['request']
+
+    # Extract the resource
+    original_spec = admission_request.get('object')
+
+    # Create an admission response
+    admission_response = {
+      'apiVersion': 'admission.k8s.io/v1',
+      'kind': 'AdmissionReview',
+      'response': {
+        'allowed': True,
+        'uid': admission_request.get('uid'),
+        'patchType': 'JSONPatch',
+        'patch': '',
+        'status': { 'message': 'Admission allowed without mutation'},
+        'warnings': []
+      }
+    }
+
+    # Return the admission review
+    return jsonify(admission_response)
+
+  return jsonify({'error': 'Invalid admission review request'}), 400
 
 @app.route('/healthz')
 def health():
