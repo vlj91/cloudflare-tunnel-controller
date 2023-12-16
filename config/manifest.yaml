@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudflare-tunnel-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-tunnel-controller
+  namespace: cloudflare-tunnel-controller
+  labels:
+    app: cloudflare-tunnel-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-tunnel-controller
+  template:
+    metadata:
+      labels:
+        app: cloudflare-tunnel-controller
+    spec:
+      containers:
+        - name: cloudflare-tunnel-controller
+          image: ghcr.io/vlj91/cloudflare-tunnel-controller:main
+          resources:
+            limits:
+              cpu: 200m
+              memory: 556Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
