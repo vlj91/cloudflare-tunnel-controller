@@ -94,7 +94,6 @@ metadata:
   labels:
     app: cloudflare-tunnel-controller
 spec:
-  serviceAccount: cloudflare-tunnel-controller
   replicas: 1
   selector:
     matchLabels:
@@ -104,6 +103,7 @@ spec:
       labels:
         app: cloudflare-tunnel-controller
     spec:
+      serviceAccount: cloudflare-tunnel-controller
       containers:
         - name: cloudflare-tunnel-controller
           image: ghcr.io/vlj91/cloudflare-tunnel-controller:latest
