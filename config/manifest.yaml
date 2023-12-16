@@ -80,7 +80,7 @@ spec:
               memory: 64Mi
           volumeMounts:
             - name: certs
-              mountPath: /tls
+              mountPath: /certs
               readOnly: true
       volumes:
         - name: certs
