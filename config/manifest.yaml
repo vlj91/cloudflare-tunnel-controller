@@ -108,6 +108,10 @@ spec:
         - name: cloudflare-tunnel-controller
           image: ghcr.io/vlj91/cloudflare-tunnel-controller:latest
           imagePullPolicy: Always
+          ports:
+            - name: https
+              containerPort: 8080
+              protocol: TCP
           resources:
             limits:
               cpu: 200m
@@ -123,3 +127,21 @@ spec:
         - name: certs
           secret:
             secretName: cloudflare-tunnel-controller-ca
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller
+  namespace: cloudflare-tunnel-controller
+  labels:
+    app: cloudflare-tunnel-controller
+spec:
+  type: ClusterIP
+  ports:
+    - name: https
+      port: 443
+      targetPort: https
+      protocol: TCP
+  selector:
+    app: cloudflare-tunnel-controller
+
