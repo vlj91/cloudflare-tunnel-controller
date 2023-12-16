@@ -23,7 +23,8 @@ spec:
     spec:
       containers:
         - name: cloudflare-tunnel-controller
-          image: ghcr.io/vlj91/cloudflare-tunnel-controller:main
+          image: ghcr.io/vlj91/cloudflare-tunnel-controller:latest
+          imagePullPolicy: Always
           resources:
             limits:
               cpu: 200m
