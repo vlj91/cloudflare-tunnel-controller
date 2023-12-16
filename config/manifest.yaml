@@ -41,7 +41,8 @@ metadata:
   namespace: cloudflare-tunnel-controller
 spec:
   secretName: cloudflare-tunnel-controller-ca
-  duration: 43800h # 5 years
+  duration: 12h
+  renewBefore: 6h
   issuerRef:
     name: root-ca-self-signed
   dnsNames:
@@ -84,4 +85,4 @@ spec:
       volumes:
         - name: certs
           secret:
-            secretName: cloudflare-tunnel-controller-cert
+            secretName: cloudflare-tunnel-controller-ca
