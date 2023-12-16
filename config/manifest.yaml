@@ -4,6 +4,51 @@ kind: Namespace
 metadata:
   name: cloudflare-tunnel-controller
 ---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ca-self-signed
+  namespace: cloudflare-tunnel-controller
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cloudflare-tunnel-controller
+  namespace: cloudflare-tunnel-controller
+spec:
+  secretName: cloudflare-tunnel-controller-ca
+  duration: 43800h # 5 years
+  issuerRef:
+    name: ca-self-signed
+  commonName: ca.cloudflare-tunnel-controller.cert-manager
+  isCA: true
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: root-ca-self-signed
+  namespace: cloudflare-tunnel-controller
+spec:
+  ca:
+    secretName: cloudflare-tunnel-controller-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cloudflare-tunnel-controller-cert
+  namespace: cloudflare-tunnel-controller
+spec:
+  secretName: cloudflare-tunnel-controller-ca
+  duration: 43800h # 5 years
+  issuerRef:
+    name: root-ca-self-signed
+  dnsNames:
+    - cloudflare-tunnel-controller
+    - cloudflare-tunnel-controller.cloudflare-tunnel-controller.svc
+    - cloudflare-tunnel-controller.cloudflare-tunnel-controller.svc.cluster.local
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,3 +77,11 @@ spec:
             requests:
               cpu: 50m
               memory: 64Mi
+          volumeMounts:
+            - name: certs
+              mountPath: /tls
+              readOnly: true
+      volumes:
+        - name: certs
+          secret:
+            secretName: cloudflare-tunnel-controller-cert

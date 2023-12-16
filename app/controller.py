@@ -1,3 +1,5 @@
+import os
+
 from logger import logger
 from flask import Flask, jsonify
 
@@ -8,4 +10,7 @@ def health():
   return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=8080)
+  if os.getenv('FLASK_ENV') == 'development':
+    app.run(host='0.0.0.0', port=8080, debug=True)
+  else:
+    app.run(host='0.0.0.0', port=8080, ssl_context=('/tls/tls.cert', '/tls/tls.key'))
