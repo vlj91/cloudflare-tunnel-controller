@@ -143,7 +143,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: controller
+  name: cloudflare-tunnel-controller
   namespace: cloudflare-tunnel-controller
   labels:
     app: cloudflare-tunnel-controller
@@ -156,4 +156,30 @@ spec:
       protocol: TCP
   selector:
     app: cloudflare-tunnel-controller
-
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: cloudflare-tunnel-mutating-webhook
+  labels:
+    app: cloudflare-tunnel-controller
+  annotations:
+    cert-manager.io/inject-ca-from: "cloudflare-tunnel-controller/cloudflare-tunnel-controller-ca"
+webhooks:
+  - name: cloudflare-tunnel-controller.cloudflare-tunnel-controller.svc.cluster.local
+    clientConfig:
+      service:
+        name: cloudflare-tunnel-controller
+        namespace: cloudflare-tunnel-controller
+        path: "/mutate"
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        resources: ["deployments"]
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1"]
+    namespaceSelector:
+      matchLabels:
+        cloudflare-tunnel-controller: enabled
