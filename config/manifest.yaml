@@ -109,8 +109,8 @@ spec:
           image: ghcr.io/vlj91/cloudflare-tunnel-controller:latest
           imagePullPolicy: Always
           ports:
-            - name: https
-              containerPort: 8080
+            - name: controller
+              containerPort: 443
               protocol: TCP
           resources:
             limits:
@@ -152,7 +152,7 @@ spec:
   ports:
     - name: https
       port: 443
-      targetPort: https
+      targetPort: 443
       protocol: TCP
   selector:
     app: cloudflare-tunnel-controller
